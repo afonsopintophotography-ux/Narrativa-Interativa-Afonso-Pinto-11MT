@@ -1,63 +1,58 @@
-$(document).ready(function () {
-  const $imgs = $(".draggable");
-  let currentAudio = null;
-  let activeImg = null;
+$(function () {
 
-  // Posição inicial aleatória
-  $imgs.each(function () {
-    const left = `${Math.random() * 70 + 10}%`;
-    const top = `${Math.random() * 60 + 10}%`;
-    $(this).css({ left, top });
-  });
-
-  // Draggable com controlo de camadas
-  $imgs.draggable({
-    containment: ".container",
-
+  // -------------------------------
+  // 1. Tornar imagens arrastáveis
+  // -------------------------------
+  $(".draggable").draggable({
     start: function () {
-      // A imagem arrastada vem para a frente
-      $(this).css("z-index", 9999);
-    },
-
-    stop: function () {
-      // Quando parar:
-      // - Se for a imagem ativa, mantém-se na frente
-      // - Se não for, volta ao valor base
-      if (!$(this).hasClass("active")) {
-        $(this).css("z-index", "");
-      }
+      $(this).css("z-index", 5000);
     }
   });
 
-  // Clique → tocar som + destacar imagem
-  $imgs.on("click", function () {
-    const $el = $(this);
-    const soundSrc = $el.data("sound");
+  // -------------------------------
+  // 2. Baralhar posições iniciais
+  // -------------------------------
+  const container = $(".container");
 
+  container.children("img").each(function () {
+    const randX = Math.random() * 400 - 200;
+    const randY = Math.random() * 400 - 200;
+
+    $(this).css({
+      transform: `translate(-50%, -50%) translate(${randX}px, ${randY}px)`
+    });
+  });
+
+  // -------------------------------
+  // 3. Tocar áudio e parar o anterior
+  // -------------------------------
+
+  let currentAudio = null; // guarda o áudio ativo
+
+  $(".sound-img").on("click", function () {
+    const img = $(this);
+
+    // --- Parar áudio anterior ---
     if (currentAudio) {
       currentAudio.pause();
       currentAudio.currentTime = 0;
     }
 
-    if (activeImg) {
-      activeImg.removeClass("active glow");
-      // repõe o z-index da anterior
-      activeImg.css("z-index", "");
+    // --- Tocar novo áudio ---
+    const soundFile = img.data("sound");
+    const audio = new Audio(soundFile);
+    currentAudio = audio;
+    audio.play();
+
+    // -------------------------------
+    // 4. Aplicar zoom grande na imagem clicada
+    // -------------------------------
+    if (img.hasClass("enlarged")) {
+      img.removeClass("enlarged");
+    } else {
+      $(".sound-img").removeClass("enlarged"); // só uma fica ampliada
+      img.addClass("enlarged");
     }
-
-    currentAudio = new Audio(soundSrc);
-    currentAudio.play();
-
-    // destacar imagem atual
-    $el.addClass("active glow");
-
-    // garantir que a imagem ativa fica no topo
-    $el.css("z-index", 9998);
-
-    activeImg = $el;
-
-    setTimeout(() => $el.removeClass("glow"), 300);
   });
+
 });
-
-

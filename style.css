@@ -1,0 +1,38 @@
+body {
+  text-align: center;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+h1, h2 {
+  text-align: center;
+}
+
+.container {
+  position: relative;
+  width: 100%;
+  height: 700px;
+  overflow: hidden;
+}
+
+.container img {
+  width: 180px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  cursor: grab;
+  transition: transform 0.25s ease, z-index 0.25s ease;
+}
+
+.container img:active {
+  cursor: grabbing;
+}
+
+/* Imagem clicada fica BEEM maior */
+.enlarged {
+  transform: translate(-50%, -50%) scale(3.2);
+  z-index: 9999;
+  cursor: zoom-out;
+}
